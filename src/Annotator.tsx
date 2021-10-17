@@ -1148,6 +1148,7 @@ export class Annotator extends React.Component<Props, State>{
                         //className="canvas-annotation"
                         open = {showAnnotation}
                         anchorEl = {anchorEl}
+                        style = {{zIndex: 50}}
                         
                         /*anchorEl={{ clientWidth: this.state.x,
                                     clientHeight: this.state.y,
