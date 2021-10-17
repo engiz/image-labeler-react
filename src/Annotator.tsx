@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { IconButton, MenuItem, Select, Button, Popper, FormControl, Grid, Paper } from '@material-ui/core';
+import { IconButton, MenuItem, NativeSelect, Button, Popper,Select, FormControl, Grid, Paper } from '@material-ui/core';
 import {Lock, LockOpen, Delete} from '@material-ui/icons';
 
 import bg from './res/bg.png';
@@ -1183,8 +1183,7 @@ export class Annotator extends React.Component<Props, State>{
                             {isLocked ? <Lock /> : <LockOpen />}
                         </IconButton>
                         <FormControl variant="outlined" style={{minWidth: 120}}>
-                        <Select
-                            displayEmpty
+                        <NativeSelect
                             onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
                                 if (this.chosenBox !== undefined) {
                                     this.chosenBox.annotation = event.target.value as string;
@@ -1194,11 +1193,13 @@ export class Annotator extends React.Component<Props, State>{
                             disabled={isLocked}
                             value={this.state.annotation}
                 
-                        >
+                        >    <option value="" disabled>
+                                Bölge Adı
+                                 </option>
                             {this.props.types.map((type: string) =>
-                                <MenuItem value={type} key={type}>{type}</MenuItem>
+                                <option value={type} key={type}>{type}</option>
                             )}
-                        </Select>
+                        </NativeSelect>
                         </FormControl>
                         <IconButton
                             color="primary"
