@@ -28,7 +28,9 @@ interface Props {
     showButton?: boolean, // showing button or not, default true
     sceneTypes?: Array<string>,
     className?: string,
-    style?: any
+    style?: any,
+    zoomable: false,
+    overlayText: false
 }
 
 interface D2 {
@@ -748,7 +750,7 @@ export class Annotator extends React.Component<Props, State>{
             x: number|null = null,
             y: number|null = null
         ) => {
-        if (!zoom) return;
+        if ((!zoom) || (!this.props.zoomable)) return;
         zoom *= 4;
         if (this.canvas == null) {
             throw "Canvas does not exist!";
@@ -918,10 +920,14 @@ export class Annotator extends React.Component<Props, State>{
                     this.ctx.lineWidth = 4 / this.scale.x;
                     this.ctx.strokeRect(box.x + margin, box.y + margin, box.w - margin * 2, box.h - margin * 2)
                     // text
-                    this.ctx.fillStyle = 'rgba(40, 40, 40, 0.8)';
-                    this.ctx.textAlign = 'center';
-                    this.ctx.font = fontSize + 'px Ubuntu';
-                    this.ctx.fillText(box.annotation, box.x + box.w / 2, box.y + box.h / 2 + fontSize / 2);
+                    if (this.props.overlayText)
+                    {
+                        this.ctx.fillStyle = 'rgba(40, 40, 40, 0.8)';
+                        this.ctx.textAlign = 'center';
+                        this.ctx.font = fontSize + 'px Ubuntu';
+                        this.ctx.fillText(box.annotation, box.x + box.w / 2, box.y + box.h / 2 + fontSize / 2);
+                    }
+
                 }
             } else if (box.hover) {
                 this.ctx.lineWidth = 5;
@@ -931,10 +937,14 @@ export class Annotator extends React.Component<Props, State>{
                 this.ctx.fillStyle = 'rgba(255, 100, 145, 0.3)';
                 this.ctx.fillRect(box.x, box.y, box.w, box.h);
                 // text
-                this.ctx.fillStyle = 'rgba(40, 40, 40, 0.8)';
-                this.ctx.textAlign = 'center';
-                this.ctx.font = fontSize + 'px Ubuntu';
-                this.ctx.fillText(box.annotation, box.x + box.w / 2, box.y + box.h / 2 + fontSize / 2);
+                if (this.props.overlayText)
+                {
+                    this.ctx.fillStyle = 'rgba(40, 40, 40, 0.8)';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.font = fontSize + 'px Ubuntu';
+                    this.ctx.fillText(box.annotation, box.x + box.w / 2, box.y + box.h / 2 + fontSize / 2);
+                }
+
             } else {
                 this.ctx.lineWidth = 5;
                 this.ctx.strokeStyle = '#555';
@@ -944,10 +954,13 @@ export class Annotator extends React.Component<Props, State>{
                 this.ctx.lineWidth = 3 / this.scale.x;
                 this.ctx.strokeRect(box.x + margin, box.y + margin, box.w - margin * 2, box.h - margin * 2)
                 // text
-                this.ctx.fillStyle = 'rgba(40, 40, 40, 0.3)';
-                this.ctx.textAlign = 'center';
-                this.ctx.font = fontSize + 'px Ubuntu';
-                this.ctx.fillText(box.annotation, box.x + box.w / 2, box.y + box.h / 2 + fontSize / 2);
+                if (this.props.overlayText)
+                {
+                    this.ctx.fillStyle = 'rgba(40, 40, 40, 0.3)';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.font = fontSize + 'px Ubuntu';
+                    this.ctx.fillText(box.annotation, box.x + box.w / 2, box.y + box.h / 2 + fontSize / 2);
+                }
             }
         }
 
