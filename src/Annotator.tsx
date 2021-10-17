@@ -142,11 +142,13 @@ class Box {
 
 
     moveBoxByDrag (xMovement: number, yMovement: number) {
+        if (this.lock) return;
         this.x += xMovement;
         this.y += yMovement;
     }
 
     resizeByDrag (edge: string|undefined, xMovement: number, yMovement: number) {
+        if (this.lock) return;
         if (edge === undefined) {
             return;
         }
@@ -211,7 +213,7 @@ export class Annotator extends React.Component<Props, State>{
         this.position = { x: 0, y: 0 };
         this.scale = { x: 0.5, y: 0.5 };
         this.state = {
-            isAnnotating: false,
+            isAnnotating: true,
             showAnnotation: false,
             anchorEl: null,
             hover: false,
@@ -1042,7 +1044,7 @@ export class Annotator extends React.Component<Props, State>{
 
     render() {
         
-        let { width, height, sceneTypes, showButton = true, className = "", style = {}, disableAnnotation=false} = this.props;
+        let { width, height, sceneTypes, showButton = false, className = "", style = {}, disableAnnotation=false} = this.props;
         let { showAnnotation, hover, mouse_down, anchorEl } = this.state;
 
         if (showAnnotation && hover && mouse_down) {
@@ -1095,17 +1097,17 @@ export class Annotator extends React.Component<Props, State>{
                     <Button onClick={this.onUpload} style={{ marginRight: 8 }} disabled={this.props.imageUrl.length === 0}>
                         Upload
                     </Button>
-                    {sceneTypeSelect}
+                    //{sceneTypeSelect} 
                 </React.Fragment>
             ) : null
         );
 
         return (
-            <div
+        /*    <div
                 style={shownStyle}
                 className={className}
             >
-                {buttons}
+                {buttons}*/
                 <div style={{
                     position: 'relative',
                     width,
@@ -1215,7 +1217,7 @@ export class Annotator extends React.Component<Props, State>{
                     </Popper>
                 </div>
           
-            </div>
+            /*</div>*/
         );
     }
 }
