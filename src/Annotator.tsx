@@ -1,11 +1,18 @@
 import * as React from 'react';
+/*
 import { Button, Form, Select } from 'antd';
 import 'antd/lib/button/style/css';
 import 'antd/lib/form/style/css';
 import 'antd/lib/select/style/css';
+*/
+
+import { IconButton, MenuItem, Select, Button, Popper, FormControl, Grid, Paper } from '@material-ui/core';
+import {Lock, LockOpen, Delete} from '@material-ui/icons';
+
 import bg from './res/bg.png';
 
-const { Option } = Select;
+//const { Option } = Select;
+
 
 interface Props {
     imageUrl: string,
@@ -32,6 +39,7 @@ interface D2 {
 interface State {
     isAnnotating: boolean,
     showAnnotation: boolean,
+    anchorEl: any,
     annotation: string,
     hover: boolean,
     mouse_down: boolean,
@@ -203,6 +211,7 @@ export class Annotator extends React.Component<Props, State>{
         this.state = {
             isAnnotating: false,
             showAnnotation: false,
+            anchorEl: null,
             hover: false,
             mouse_down: false,
             uploadIcon: 'upload',
@@ -593,9 +602,13 @@ export class Annotator extends React.Component<Props, State>{
             y: newY,
             lock: box.lock
         });
+        
+        
+
         if (showAnnotation && !this.state.showAnnotation) {
             this.setState({
                 showAnnotation: true
+
             });
         }
     };
@@ -622,6 +635,20 @@ export class Annotator extends React.Component<Props, State>{
     };
 
     getCurrentCoordinate(box: Box) {
+
+        var canvasdomrect = this.imageCanvas.current.getBoundingClientRect();
+
+        const getBoundingClientRect = () => new DOMRect(box.x * this.scale.x + this.position.x + canvasdomrect.x,
+                                                        box.y * this.scale.y + this.position.y + 10  + canvasdomrect.y,
+                                                        box.w * this.scale.x, box.h * this.scale.y);
+        
+                                            
+        this.setState ({anchorEl: {
+            clientWidth: getBoundingClientRect().width,
+            clientHeight: getBoundingClientRect().height,
+            getBoundingClientRect
+            }})
+
         return {
             x: box.x * this.scale.x + this.position.x,
             y: box.y * this.scale.y + this.position.y,
@@ -1001,8 +1028,10 @@ export class Annotator extends React.Component<Props, State>{
     }
 
     render() {
+        
         let { width, height, sceneTypes, showButton = true, className = "", style = {}, disableAnnotation=false} = this.props;
-        let { showAnnotation, hover, mouse_down } = this.state;
+        let { showAnnotation, hover, mouse_down, anchorEl } = this.state;
+
         if (showAnnotation && hover && mouse_down) {
             showAnnotation = false;
         }
@@ -1033,13 +1062,13 @@ export class Annotator extends React.Component<Props, State>{
         if (sceneTypes) {
             sceneTypeSelect = (
                 <Select
-                    onChange={(sceneType: string) => {
-                        this.setState({ sceneType });
+                    onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
+                        this.setState({sceneType : event.target.value as string });
                     }}
                     value={this.state.sceneType}
                 >
                     {sceneTypes.map((type: string) =>
-                        <Option value={type} key={type}>{type}</Option>
+                        <MenuItem value={type} key={type}>{type}</MenuItem>
                     )}
                 </Select>
             );
@@ -1057,6 +1086,7 @@ export class Annotator extends React.Component<Props, State>{
                 </React.Fragment>
             ) : null
         );
+
         return (
             <div
                 style={shownStyle}
@@ -1105,44 +1135,30 @@ export class Annotator extends React.Component<Props, State>{
                         </h1>
                     </div>
 
-
-                    <Form
-                        className="canvas-annotation"
-                        style={{
-                            display: showAnnotation? 'block' : 'none',
-                            position: 'absolute',
-                            left: this.state.x,
-                            top: this.state.y + 10,
-                            padding: 8,
-                            backgroundColor: 'white',
-                            borderRadius: 4,
-                            zIndex: 1
+                    <Popper
+                        //className="canvas-annotation"
+                        open = {showAnnotation}
+                        anchorEl = {anchorEl}
+                        
+                        /*anchorEl={{ clientWidth: this.state.x,
+                                    clientHeight: this.state.y,
+                                    getBoundingClientRect: }}
+                        */
+                        /*anchorPosition={{ top: this.state.x, left: this.state.y + 10 }}
+                        anchorOrigin={{
+                            vertical: 'top',
+                            horizontal: 'left',
                         }}
-                    >                        
-                        <Select
-                            onChange={(value: string) => {
-                                if (this.chosenBox !== undefined) {
-                                    this.chosenBox.annotation = value;
-                                    this.setState({ annotation: value });
-                                }
-                            }}
-                            disabled={isLocked}
-                            value={this.state.annotation}
-                        >
-                            {this.props.types.map((type: string) =>
-                                <Option value={type} key={type}>{type}</Option>
-                            )}
-                        </Select>
-
-                        <Button
-                            icon={isLocked ? 'lock' : 'unlock'}
-                            shape="circle"
-                            type="primary"
-                            style={{
-                                margin: 4,
-                                float: 'left'
-                            }}
+                        transformOrigin={{
+                            vertical: 'top',
+                            horizontal: 'left',
+                        }}*/
+                    >
+                        <Paper>
+                        <IconButton
+                            color="primary"
                             disabled={disableAnnotation}
+                            component="span"
                             onClick={() => {
                                 if (this.chosenBox) {
                                     if (this.chosenBox.lock) {
@@ -1153,21 +1169,37 @@ export class Annotator extends React.Component<Props, State>{
                                         this.setState({ lock: true });
                                     }
                                 }
-                            }}
-                        />
-                        <Button
-                            icon="delete"
-                            shape="circle"
-                            type="primary"
-                            style={{
-                                float: 'right',
-                                margin: 4
+                            }}>
+                            {isLocked ? <Lock /> : <LockOpen />}
+                        </IconButton>
+                        <FormControl variant="outlined" style={{minWidth: 120}}>
+                        <Select
+                            displayEmpty
+                            onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
+                                if (this.chosenBox !== undefined) {
+                                    this.chosenBox.annotation = event.target.value as string;
+                                    this.setState({ annotation: event.target.value as string});
+                                }
                             }}
                             disabled={isLocked}
+                            value={this.state.annotation}
+                
+                        >
+                            {this.props.types.map((type: string) =>
+                                <MenuItem value={type} key={type}>{type}</MenuItem>
+                            )}
+                        </Select>
+                        </FormControl>
+                        <IconButton
+                            color="primary"
+                            disabled={isLocked}
                             onClick={this.onDelete}
-                        />
-                       
-                    </Form>
+                            component="span"
+                        >
+                        <Delete/>
+                        </IconButton>
+                        </Paper>
+                    </Popper>
                 </div>
           
             </div>

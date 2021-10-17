@@ -5,7 +5,7 @@ import { Annotator } from './Annotator';
 
 const Component: React.FC = (props) => {
   const [defaultSceneType, setDefault] = useState(undefined);
-  const [url, setUrl] = useState("https://i.postimg.cc/cJrdb8Sx/screenshot.png");
+  const [url, setUrl] = useState("https://www.petihtiyac.com/Data/Blog/13.jpg");
 
   return (
     <div>
@@ -21,7 +21,7 @@ const Component: React.FC = (props) => {
           }, 500);
         } else {
           setTimeout(()=>{
-            setUrl("https://i.postimg.cc/cJrdb8Sx/screenshot.png");
+            setUrl("https://www.petihtiyac.com/Data/Blog/13.jpg");
             setDefault(undefined);
           }, 500);
         }
