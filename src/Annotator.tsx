@@ -475,6 +475,7 @@ export class Annotator extends React.Component<Props, State>{
 
             // Box may be resized by dragging
             this.refreshBoxTipPosition();
+            this.boxesUpdate();
         });
 
         this.registerEvent(window, 'mouseup', ()=>{
@@ -495,6 +496,7 @@ export class Annotator extends React.Component<Props, State>{
             this.startX = undefined;
             this.startY = undefined;
             this.dragX = this.startX; this.dragY = this.startY;
+            this.boxesUpdate();
         });
 
 
@@ -1188,6 +1190,7 @@ export class Annotator extends React.Component<Props, State>{
                                 if (this.chosenBox !== undefined) {
                                     this.chosenBox.annotation = event.target.value as string;
                                     this.setState({ annotation: event.target.value as string});
+                                    this.boxesUpdate();
                                 }
                             }}
                             disabled={isLocked}
