@@ -35,7 +35,8 @@ const Component: React.FC = (props) => {
           console.log(labeledData);
         }}
         types={['A', 'B', 'Cylinder']}
-        defaultType={"Cylinder"}
+        label='Selectme'
+        defaultType={""}
         sceneTypes={['1', '2', '3']}
         defaultSceneType={defaultSceneType}
         style={{

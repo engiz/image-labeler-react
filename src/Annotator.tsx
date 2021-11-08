@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { IconButton, MenuItem, NativeSelect, Button, Popper,Select, FormControl, Grid, Paper } from '@material-ui/core';
+import { IconButton, MenuItem, InputLabel, Button, Popper, Select, FormControl, Grid, Paper } from '@material-ui/core';
 import {Lock, LockOpen, Delete} from '@material-ui/icons';
 
 import bg from './res/bg.png';
@@ -24,7 +24,8 @@ interface Props {
     className?: string,
     style?: any,
     zoomable: false,
-    overlayText: false
+    overlayText: false,
+    label: string,
 }
 
 interface D2 {
@@ -823,7 +824,7 @@ export class Annotator extends React.Component<Props, State>{
         } else if (this.props.defaultType) {
             this.annotatingBox.annotation = this.props.defaultType;
         } else {
-            this.annotatingBox.annotation = this.props.types[0];
+            this.annotatingBox.annotation = "";
         }
     };
 
@@ -1184,22 +1185,26 @@ export class Annotator extends React.Component<Props, State>{
                             }}>
                             {isLocked ? <Lock /> : <LockOpen />}
                         </IconButton>
-                        <FormControl variant="outlined" style={{minWidth: 120}}>
-                        <NativeSelect
+                        <FormControl required  style={{minWidth: 120}}>
+                        <InputLabel htmlFor="outlined-sel-native-simple">{this.props.label}</InputLabel>
+                        <Select
+                            native
                             onChange={(event: React.ChangeEvent<{ value: unknown }>) => {
                                 if (this.chosenBox !== undefined) {
                                     this.chosenBox.annotation = event.target.value as string;
                                     this.setState({ annotation: event.target.value as string});
-                                    this.boxesUpdate();
-                                }
-                            }}
+                                    //this.boxesUpdate();
+                                    }
+                                }}
+                            label="Annotation"
+                            inputProps={{id: 'outlined-sel-native-simple', }}
                             disabled={isLocked}
                             value={this.state.annotation}>
-                            <option aria-label="Seçiniz" value="" />
+                            <option aria-label="None" value="" />
                             {this.props.types.map((type: string) =>
                                 <option value={type} key={type}>{type}</option>
                             )}
-                        </NativeSelect>
+                        </Select>
                         </FormControl>
                         <IconButton
                             color="primary"
