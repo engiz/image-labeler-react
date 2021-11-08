@@ -1193,7 +1193,7 @@ export class Annotator extends React.Component<Props, State>{
                                 if (this.chosenBox !== undefined) {
                                     this.chosenBox.annotation = event.target.value as string;
                                     this.setState({ annotation: event.target.value as string});
-                                    //this.boxesUpdate();
+                                    this.boxesUpdate();
                                     }
                                 }}
                             label="Annotation"
