@@ -25,7 +25,7 @@ interface Props {
     style?: any,
     zoomable: false,
     overlayText: false,
-    label: string,
+    defaultLabel?: string,
 }
 
 interface D2 {
@@ -38,6 +38,7 @@ interface State {
     showAnnotation: boolean,
     anchorEl: any,
     annotation: string,
+    label: string,
     hover: boolean,
     mouse_down: boolean,
     uploadIcon: 'upload' | 'check' | 'loading' | 'close',
@@ -57,6 +58,7 @@ export interface BoundingBox {
     w: number,
     h: number,
     annotation: string,
+    label: string,
 }
 
 export interface IPostData {
@@ -77,6 +79,7 @@ class Box {
     public chosen: boolean;
     public lock: boolean;
     public annotation: string;
+    public label: string;
 
     constructor(x: number, y: number, w: number, h: number) {
         this.x = x;
@@ -86,7 +89,8 @@ class Box {
         this.hover = false;
         this.chosen = false;
         this.lock = false;
-        this.annotation = ''
+        this.annotation = '';
+        this.label = '';
     }
 
     insideBox(x: number, y: number) {
@@ -125,13 +129,14 @@ class Box {
     }
 
     getData() {
-        const {x, y, w, h, annotation} = this;
-        return { x, y, w, h, annotation } as BoundingBox;
+        const {x, y, w, h, annotation, label} = this;
+        return { x, y, w, h, annotation, label } as BoundingBox;
     }
 
     static fromBoundingBox(data: BoundingBox){
         const box = new Box(data.x, data.y, data.w, data.h);
         box.annotation = data.annotation;
+        box.label = data.label;
         return box;
     }
 
@@ -217,6 +222,7 @@ export class Annotator extends React.Component<Props, State>{
             uploaded: false,
             lock: false,
             annotation: '',
+            label: '',
             sceneType: '',
             x: 0,
             y: 0,
@@ -599,6 +605,7 @@ export class Annotator extends React.Component<Props, State>{
 
         this.setState({
             annotation: box.annotation,
+            label: box.label,
             x: x,
             y: newY,
             lock: box.lock
@@ -630,6 +637,7 @@ export class Annotator extends React.Component<Props, State>{
         this.setState({
             showAnnotation: false,
             annotation: '',
+            label: '',
             hoverEdge: undefined,
             isMovingBox: false
         });
@@ -818,6 +826,10 @@ export class Annotator extends React.Component<Props, State>{
             Math.abs(x - this.startX),
             Math.abs(y - this.startY)
         );
+
+        if (this.annotatingBox.label === "" && this.props.defaultLabel) {
+            this.annotatingBox.label = this.props.defaultLabel;
+        }
 
         if (this.nextDefaultType) {
             this.annotatingBox.annotation = this.nextDefaultType;
@@ -1186,7 +1198,7 @@ export class Annotator extends React.Component<Props, State>{
                             {isLocked ? <Lock /> : <LockOpen />}
                         </IconButton>
                         <FormControl required  style={{minWidth: 120}}>
-                        <InputLabel htmlFor="outlined-sel-native-simple">{this.props.label}</InputLabel>
+                        <InputLabel htmlFor="outlined-sel-native-simple">{this.state.label}</InputLabel>
                         <Select
                             native
                             onChange={(event: React.ChangeEvent<{ value: unknown }>) => {

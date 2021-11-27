@@ -35,7 +35,7 @@ const Component: React.FC = (props) => {
           console.log(labeledData);
         }}
         types={['A', 'B', 'Cylinder']}
-        label='Selectme'
+        defaultLabel={'Selectme'}
         defaultType={""}
         sceneTypes={['1', '2', '3']}
         defaultSceneType={defaultSceneType}
@@ -53,7 +53,8 @@ const Component: React.FC = (props) => {
           y: 305,
           w: 65,
           h: 61,
-          annotation: 'A'
+          annotation: 'A',
+          label: 'ses',
         }]}
         disableAnnotation={false}
       />
