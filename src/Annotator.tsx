@@ -26,6 +26,7 @@ interface Props {
     zoomable: false,
     overlayText: false,
     defaultLabel?: string,
+    editMode: false,
 }
 
 interface D2 {
@@ -149,6 +150,7 @@ class Box {
 
     resizeByDrag (edge: string|undefined, xMovement: number, yMovement: number) {
         if (this.lock) return;
+        if (this.label != "Kontrol Tipi") return;
         if (edge === undefined) {
             return;
         }
@@ -489,12 +491,14 @@ export class Annotator extends React.Component<Props, State>{
             // This apply to scenario when mouseup outside of the canvas
             if (this.annotatingBox !== undefined) {
                 // User create new box
-               
+                if (!this.props.editMode)
+                {
                 this.boxes.push(this.annotatingBox);
                 this.chooseBox(this.annotatingBox);
                 this.boxesUpdate();
-               
+                }
                 this.annotatingBox = undefined;
+                
             } else if (this.chosenBox && !this.state.isAnnotating){
                 this.refreshBoxTipPosition();
             }

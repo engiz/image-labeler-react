@@ -57,6 +57,7 @@ const Component: React.FC = (props) => {
           label: 'ses',
         }]}
         disableAnnotation={false}
+        editMode={true}
       />
     </div>
   )
